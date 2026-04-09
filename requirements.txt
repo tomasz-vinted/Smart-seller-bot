@@ -1,0 +1,8 @@
+streamlit
+pandas
+sqlalchemy
+playwright
+playwright-stealth
+openai
+python-telegram-bot
+schedule
