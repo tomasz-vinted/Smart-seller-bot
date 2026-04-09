@@ -1,20 +1,11 @@
 import streamlit as st
 import pandas as pd
-import json
 
-# Konfiguracja strony
 st.set_page_config(page_title="Smart Seller Bot", page_icon="🤖")
 
-# Używamy st.session_state zamiast bazy danych dla maksymalnej stabilności w chmurze
+# Inicjalizacja konfiguracji w pamięci aplikacji
 if 'config' not in st.session_state:
-st.session_state.config = {
-'is_active': False,
-'discount_amount': 5.0,
-'openai_token': '',
-'telegram_token': '',
-'telegram_chat_id': '',
-'platform_session_cookie': ''
-}
+st.session_state.config = {'is_active': False, 'discount_amount': 5.0, 'openai_token': '', 'telegram_token': '', 'telegram_chat_id': '', 'platform_session_cookie': ''}
 
 def is_configured():
 c = st.session_state.config
@@ -31,23 +22,14 @@ t_id = st.text_input("Telegram Chat ID (Same cyfry)")
 cookies = st.text_area("Cookies (JSON)")
 disc = st.number_input("Zniżka (PLN)", value=5.0)
 if st.form_submit_button("Zapisz i Uruchom"):
-st.session_state.config = {
-'is_active': True,
-'discount_amount': disc,
-'openai_token': o_token,
-'telegram_token': t_token,
-'telegram_chat_id': t_id,
-'platform_session_cookie': cookies
-}
-st.success("Zapisano pomyślnie!")
+st.session_state.config.update({'is_active': True, 'discount_amount': disc, 'openai_token': o_token, 'telegram_token': t_token, 'telegram_chat_id': t_id, 'platform_session_cookie': cookies})
+st.success("Zapisano! Odśwież stronę.")
 st.rerun()
 else:
 c = st.session_state.config
 is_active = st.toggle("Bot Aktywny", value=c['is_active'])
 st.session_state.config['is_active'] = is_active
-
 st.markdown(f"**Status:** {'✅ AKTYWNY' if is_active else '❌ NIEAKTYWNY'}")
-
 t1, t2 = st.tabs(["Ustawienia", "Status"])
 with t1:
 with st.form("update"):
@@ -57,13 +39,9 @@ tt = st.text_input("Telegram Token", value=c['telegram_token'], type="password")
 ti = st.text_input("Chat ID", value=c['telegram_chat_id'])
 co = st.text_area("Cookies", value=c['platform_session_cookie'])
 if st.form_submit_button("Aktualizuj"):
-st.session_state.config.update({
-'discount_amount': d, 'openai_token': ot,
-'telegram_token': tt, 'telegram_chat_id': ti,
-'platform_session_cookie': co
-})
+st.session_state.config.update({'discount_amount': d, 'openai_token': ot, 'telegram_token': tt, 'telegram_chat_id': ti, 'platform_session_cookie': co})
 st.success("Zaktualizowano!")
 st.rerun()
 with t2:
-st.info("Bot pracuje w chmurze. Powiadomienia o negocjacjach otrzymasz na Telegramie.")
+st.info("Bot pracuje w chmurze. Powiadomienia otrzymasz na Telegramie.")
 st.write("Ostatnia synchronizacja: " + pd.Timestamp.now().strftime("%H:%M:%S"))
